@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Query List</title>
+<link href="../../assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/bootstrap.min.js"></script>
+</head>
+<body>
+ <script type="text/javascript">
+	 function cadastro(){
+	   event.preventDefault();
+	   $.post('/usuario/cadastro', 
+        {nome: $('#nome').val(),
+         email: $('#email').val(),
+		 usuario: $('#usuario').val(),
+		 senha: $('#senha').val()},
+		function(data, status){
+		   alert(data);
+		});	   
+	 } 
+ </script>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+
+  <a class="navbar-brand" href="#">Query List</a>
+  
+  <ul class="navbar-nav">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarLista" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telefones</a>
+        <div class="dropdown-menu" aria-labelledby="navbarLista">
+          <a class="dropdown-item" href="../telefones/cadastrar.html">Cadastrar</a>
+          <a class="dropdown-item" href="#">Listar</a>
+        </div>	  
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarUsuarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Usuários</a>
+        <div class="dropdown-menu" aria-labelledby="navbarUsuarios">
+          <a class="dropdown-item" href="cadastrar.html">Cadastrar</a>
+          <a class="dropdown-item" href="lista.html">Listar</a>
+        </div>	  
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/logout">Sair</a>
+    </li>
+  </ul>
+</nav>
+<form>
+  <div class="form-group">
+    <label for="nome">Nome completo</label>
+    <input type="text" class="form-control" id="nome" placeholder="Insira o nome" required>
+	<label for="email">Email</label>
+	<input type="email" class="form-control" id="email" placeholder="Insira o email" required>
+	<label for="usuario">Usuário</label>
+	<input type="text" class="form-control" id="usuario" placeholder="Insira o email" required>
+	<label for="senha">Senha</label>
+	<input type="password" class="form-control" id="senha" placeholder="Insira a senha" required>
+	<br>
+	<input type="submit" value="Cadastrar" onclick="cadastro()">
+  </div>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Query List</title>
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="../../assets/js/jquery.dataTables.min.js"></script>
+<script src="../../assets/js/dataTables.buttons.min.js"></script>
+<script src="../../assets/js/dataTables.select.min.js"></script>
+<script src="../../assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="../../assets/js/dataTables.editor.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+  var tabela;
+  $(document).ready(function(){
+  $('#cidade').empty();
+  $.ajax({
+    url: '/telefones/cidades/'+$('#uf').val(),
+    type: 'GET',
+    success: function(result) {
+		var cidades = JSON.parse(result);
+		var selectCidade = $('#cidade');
+		selectCidade.empty();
+		for(var i=0;i<cidades.length;i++){
+		  selectCidade.append($('<option></option>').val(cidades[i].Id).html(cidades[i].Nome));
+		}
+		mudaCidade();
+		}});
+  //$('#cidade').empty();
+    tabela = $('#telefones').DataTable({
+       searching: false,
+	   ajax: {
+	     url: "/telefone/cidade/"+$('#cidade').val(),
+		 type:'POST' 
+		 },
+	   "language": {
+    "sEmptyTable": "Nenhum registro encontrado",
+    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sInfoThousands": ".",
+    "sLengthMenu": "_MENU_ resultados por página",
+    "sLoadingRecords": "Carregando...",
+    "sProcessing": "Processando...",
+    "sZeroRecords": "Nenhum registro encontrado",
+    "sSearch": "Pesquisar",
+    "oPaginate": {
+        "sNext": "Próximo",
+        "sPrevious": "Anterior",
+        "sFirst": "Primeiro",
+        "sLast": "Último"
+    },
+    "oAria": {
+        "sSortAscending": ": Ordenar colunas de forma ascendente",
+        "sSortDescending": ": Ordenar colunas de forma descendente"
+    }
+}
+} );  
+   
+  });
+   function mudaUF(sel){
+  $.ajax({
+    url: '/telefones/cidades/'+sel.value,
+    type: 'GET',
+    success: function(result) {
+		var cidades = JSON.parse(result);
+		var selectCidade = $('#cidade');
+		selectCidade.empty();
+		for(var i=0;i<cidades.length;i++){
+		  selectCidade.append($('<option></option>').val(cidades[i].Id).html(cidades[i].Nome));
+		}
+		mudaCidade();
+   }
+   }
+   );
+   }
+   
+   function mudaCidade(){
+     tabela.ajax.url("/telefone/cidade/"+$('#cidade').val()).load();
+     //$.ajaxSetup({ cache: true });  
+    }
+   
+</script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+<div class="container">
+    <br/>
+	<div class="row justify-content-center">
+                        <div class="col-12 col-md-10 col-lg-8">
+                            <form class="card card-sm">
+							  <center>
+							  <img src="assets/img/logo.png " alt="logo">
+							  </center>
+								<label for="estado">Estado:</label>
+									<select class="form-control" id="uf" onchange="mudaUF(this)" required>
+										<option value="AC">Acre</option>
+										<option value="AL">Alagoas</option>
+										<option value="AP">Amapá</option>
+										<option value="AM">Amazonas</option>
+										<option value="BA">Bahia</option>
+										<option value="CE">Ceará</option>
+										<option value="DF">Distrito Federal</option>
+										<option value="ES">Espírito Santo</option>
+										<option value="GO">Goiás</option>
+										<option value="MA">Maranhão</option>
+										<option value="MT">Mato Grosso</option>
+										<option value="MS">Mato Grosso do Sul</option>
+										<option value="MG">Minas Gerais</option>
+										<option value="PA">Pará</option>
+										<option value="PB">Paraíba</option>
+										<option value="PR">Paraná</option>
+										<option value="PE">Pernambuco</option>
+										<option value="PI">Piauí</option>
+										<option value="RJ">Rio de Janeiro</option>
+										<option value="RN">Rio Grande do Norte</option>
+										<option value="RS">Rio Grande do Sul</option>
+										<option value="RO">Rondônia</option>
+										<option value="RR">Roraima</option>
+										<option value="SC">Santa Catarina</option>
+										<option value="SP">São Paulo</option>
+										<option value="SE">Sergipe</option>
+										<option value="TO">Tocantins</option>				
+									</select>
+								<label for="estado">Cidade:</label>
+									<select class="form-control" onchange="mudaCidade()" id="cidade">
+										<option></option>
+									</select>
+									
+                                <div class="card-body row no-gutters align-items-center">
+                                    <div class="col-auto">
+                                        <i class="fas fa-search h4 text-body"></i>
+                                    </div>
+                         
+                                    <div class="col">
+                                        <input class="form-control form-control-lg form-control-borderless" type="search" placeholder="Pesquisar por palavra-chave">
+                                    </div>
+                                
+                                    <div class="col-auto">
+                                        <button class="btn btn-lg btn-success" type="submit">Pesquisar</button>
+                                    </div>
+                          
+									
+                                </div>
+				<table id="telefones" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+				<th>Categoria</th>
+            </tr>
+        </thead>
+    </table>
+                            </form>
+                        </div>
+                      
+                    </div>
+</div>
+</body>
+</html>

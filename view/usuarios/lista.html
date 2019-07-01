@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Query List</title>
+<link href="../../assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="../../assets/css/login.css" rel="stylesheet" id="bootstrap-css">
+<link href="../../assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/bootstrap.min.js"></script>
+<script src="../../assets/js/jquery.dataTables.min.js"></script>
+<script src="../../assets/js/dataTables.buttons.min.js"></script>
+<script src="../../assets/js/dataTables.select.min.js"></script>
+<script src="../../assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="../../assets/js/dataTables.editor.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#usuarios').DataTable({
+	   ajax: "/usuarios/listar",
+	   
+	   "language": {
+    "sEmptyTable": "Nenhum registro encontrado",
+    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+    "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sInfoThousands": ".",
+    "sLengthMenu": "_MENU_ resultados por página",
+    "sLoadingRecords": "Carregando...",
+    "sProcessing": "Processando...",
+    "sZeroRecords": "Nenhum registro encontrado",
+    "sSearch": "Pesquisar",
+    "oPaginate": {
+        "sNext": "Próximo",
+        "sPrevious": "Anterior",
+        "sFirst": "Primeiro",
+        "sLast": "Último"
+    },
+    "oAria": {
+        "sSortAscending": ": Ordenar colunas de forma ascendente",
+        "sSortDescending": ": Ordenar colunas de forma descendente"
+    }
+},
+    "columnDefs": [
+        {
+            "targets": 2,
+            "render": function (data, type, row) {
+				 var deleteBtn = '<button onclick="deletar('+data +')">Deletar</button>';
+                 return deleteBtn;
+            }},
+			{
+                "targets": 3,
+                "render": function (data, type, row) {
+				 var alteraBtn = '<button onclick="alterarModal('+data +')">Alterar</button>';
+                 return alteraBtn;
+            }
+        }
+    ]}
+	   );
+} );
+function deletar(id){
+  $.ajax({
+    url: '/usuarios/'+id,
+    type: 'DELETE',
+    success: function(result) {
+		alert(result);
+		location.reload();
+    }
+  });
+}
+
+function alterarModal(id){
+  $.ajax({
+    url: '/usuarios/'+id,
+    type: 'GET',
+    success: function(result) {
+	    var usuario = JSON.parse(result);
+	    $('#nome').val(usuario.nome);
+		$('#usuario').val(usuario.usuario);
+		$('#email').val(usuario.email);
+		$('#id').val(id);
+		$('#alterar').modal('show');
+    }
+  });  
+}
+
+$(document).ready(function() {
+$(document).delegate("click", "#btnAltera" ,function(event){
+  event.stopPropagation();
+  alterar();
+});
+});
+
+function alterar(){
+  $.ajax({
+    url: '/usuarios/'+$('#id').val(),
+    type: 'PUT',
+	data:{
+	  nome: $('#nome').val(),
+	  usuario: $('#usuario').val(),
+	  email: $('#email').val(),
+	  senha: $('#senha').val()
+	  },
+    success: function(result) {
+	    alert(result);
+		location.reload();
+    }
+  });  
+}
+
+</script>
+<div id="alterar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+	    <h4>Alterar Usuário</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+	    <div class="form-group">
+          <label for="nome">Nome:</label>
+		  <input type="text" id="nome" class="form-control" placeholder="Nome"></input>
+		</div>
+		<div class="form-group">
+          <label for="usuario">Usuário:</label>
+		  <input type="text" id="usuario" class="form-control" placeholder="Usuário"></input>
+		</div>
+		<div class="form-group">
+		  <label for="email">Email:</label>
+		  <input type="text" id="email" class="form-control" placeholder="Email"></input>
+		</div>
+		<div class="form-group">
+		  <label for="senha">Senha:</label>
+		  <input type="password" id="senha"  class="form-control" placeholder="Senha"></input>
+		</div>
+		<input type="hidden" id="id"></input>
+	  </div>
+      </div>
+      <div class="modal-footer">
+	    <button type="button" id="btnAltera" class="btn btn-primary">Ok</button>
+        <button type="button" class="btn btn-secondary">Fechar</button>
+      </div>
+    </div>
+
+  </div>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+
+  <a class="navbar-brand" href="#">Query List</a>
+  
+  <ul class="navbar-nav">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarLista" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telefones</a>
+        <div class="dropdown-menu" aria-labelledby="navbarLista">
+          <a class="dropdown-item" href="../telefones/cadastrar.html">Cadastrar</a>
+          <a class="dropdown-item" href="#">Listar</a>
+        </div>	  
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarUsuarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Usuários</a>
+        <div class="dropdown-menu" aria-labelledby="navbarUsuarios">
+          <a class="dropdown-item" href="cadastrar.html">Cadastrar</a>
+          <a class="dropdown-item" href="lista.html">Listar</a>
+        </div>	  
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/logout">Sair</a>
+    </li>
+  </ul>
+</nav>
+<table id="usuarios" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Usuário</th>
+				<th></th>
+				<th></th>
+            </tr>
+        </thead>
+    </table>
+</body>
+</html>

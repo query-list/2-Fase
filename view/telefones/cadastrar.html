@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Query List</title>
+<link href="../../assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/bootstrap.min.js"></script>
+</head>
+<body>
+ <script type="text/javascript">
+  $(document).ready(function(){
+  mudaUF();
+  $.ajax({
+    url: '/telefones/categorias',
+    type: 'GET',
+    success: function(result) {
+		var categorias = JSON.parse(result);
+		var selectCategoria = $('#categoria');
+		selectCategoria.empty();
+		for(var i=0;i<categorias.length;i++){
+		  selectCategoria.append($('<option></option>').val(categorias[i].categoria).html(categorias[i].categoria));
+		}	
+  }});}
+  );  
+ 
+   function mudaUF(){
+  $.ajax({
+    url: '/telefones/cidades/'+$('#uf').val(),
+    type: 'GET',
+    success: function(result) {
+		var cidades = JSON.parse(result);
+		var selectCidade = $('#cidade');
+		selectCidade.empty();
+		for(var i=0;i<cidades.length;i++){
+		  selectCidade.append($('<option></option>').val(cidades[i].Id).html(cidades[i].Nome));
+		}
+   }
+   }
+   );
+   }
+ 	 function cadastro(){
+	   event.preventDefault();
+	   //alert($("#uf").val());
+	   $.post('/telefones', 
+        {
+		  nome: $("#nome").val(),
+		  categoria: $("#categoria").val(),
+		  numero: $("#numero").val(),
+		  uf: $("#uf").val(),
+		  cidade: $('#cidade').val(),
+		  palavras: $('#palavras').val()
+		},
+		function(data, status){
+		   alert(data);
+		});	   
+	 } 
+ </script>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <a class="navbar-brand" href="#">Query List</a>
+  <ul class="navbar-nav">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarLista" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Telefones</a>
+        <div class="dropdown-menu" aria-labelledby="navbarLista">
+          <a class="dropdown-item" href="cadastrar.html">Cadastrar</a>
+          <a class="dropdown-item" href="lista.html">Listar</a>
+        </div>	  
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarUsuarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Usuários</a>
+        <div class="dropdown-menu" aria-labelledby="navbarUsuarios">
+          <a class="dropdown-item" href="../usuarios/cadastrar.html">Cadastrar</a>
+          <a class="dropdown-item" href="../usuarios/lista.html">Listar</a>
+        </div>	  
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/logout">Sair</a>
+    </li>
+  </ul>
+</nav>
+<form>
+  <div class="form-group">
+    <label for="nome">Nome do Serviço</label>
+    <input type="text" class="form-control" id="nome" placeholder="Insira o nome" required>
+  </div>
+  <div class="form-group">
+	<label for="categoria">Categoria do Telefone </label>
+	<select id="categoria" class="form-control">
+	</select>
+  </div>
+  <div class="form-group">
+	<label for="numero">Numero do Telefone(com DD) </label>
+	<input type="text" class="form-control" id="numero" placeholder="Insira o telefone" required>
+  </div>
+  <div class="form-group">
+	<label for="uf">Estado</label>
+<select id="uf"  class="form-control" onchange="mudaUF()">
+	<option value="AC">Acre</option>
+	<option value="AL">Alagoas</option>
+	<option value="AP">Amapá</option>
+	<option value="AM">Amazonas</option>
+	<option value="BA">Bahia</option>
+	<option value="CE">Ceará</option>
+	<option value="DF">Distrito Federal</option>
+	<option value="ES">Espírito Santo</option>
+	<option value="GO">Goiás</option>
+	<option value="MA">Maranhão</option>
+	<option value="MT">Mato Grosso</option>
+	<option value="MS">Mato Grosso do Sul</option>
+	<option value="MG">Minas Gerais</option>
+	<option value="PA">Pará</option>
+	<option value="PB">Paraíba</option>
+	<option value="PR">Paraná</option>
+	<option value="PE">Pernambuco</option>
+	<option value="PI">Piauí</option>
+	<option value="RJ">Rio de Janeiro</option>
+	<option value="RN">Rio Grande do Norte</option>
+	<option value="RS">Rio Grande do Sul</option>
+	<option value="RO">Rondônia</option>
+	<option value="RR">Roraima</option>
+	<option value="SC">Santa Catarina</option>
+	<option value="SP">São Paulo</option>
+	<option value="SE">Sergipe</option>
+	<option value="TO">Tocantins</option>
+</select>
+  </div>
+  <div class="form-group">
+	<label for="cidade">Cidade</label>
+	<select id="cidade" class="form-control">
+	</select>
+  </div>
+  <div class="form-group">
+	<label for="palavras">Palavras-Chaves</label>
+    <textarea class="form-control" id="palavras" rows="3"></textarea>
+  </div>	  
+  <input type="submit" value="Cadastrar" onclick="cadastro()">
+  </div>
+</form>
+
+</body>
+</html>
