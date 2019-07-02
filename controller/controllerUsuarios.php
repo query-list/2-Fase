@@ -49,13 +49,15 @@ class ControllerUsuarios{
 	}
 	
 	public static function atualiza($nome, $usuario, $email, $senha, $id){
-		$usuario = new Usuarios();
-		$usuario->setNome = $nome;
-		$usuario->setUsuario = $usuario;
-		$usuario->setEmail = $email;
-		$usuario->setSenha = $senha;
-		$usuario->setId = $id;
-		DaoUsuario::atualiza($usuario);
+		$Usuario = new Usuarios();
+		$Usuario->setNome($nome);
+		$Usuario->setUsuario($usuario);
+		$Usuario->setEmail($email);
+		$Usuario->setSenha($senha);
+		$Usuario->setId($id);
+		Conn::getInstance()->beginTransaction();
+		DaoUsuarios::atualiza($Usuario);
+		Conn::getInstance()->commit();
 	}
 }
 

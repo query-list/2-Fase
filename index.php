@@ -32,8 +32,8 @@
 		   session_start();
 		   if(empty($_SESSION['usuario']))
 		     exit;
-		   ControllerUsuarios::cadastrar($request->getParsedBodyParam('nome'), $request->getParsedBodyParam('email'), 
-		     $request->getParsedBodyParam('usuario'), $request->getParsedBodyParam('senha'));
+		   ControllerUsuarios::cadastrar($request->getParsedBodyParam('nome'), $request->getParsedBodyParam('usuario'), 
+		     $request->getParsedBodyParam('email'), $request->getParsedBodyParam('senha'), $request->getParsedBodyParam('id'));
 	});
 		
 	$app->get('/usuarios/listar', function ($request, $response, $args) {
@@ -63,7 +63,7 @@
 		session_start();
 		if(empty($_SESSION['usuario']))
 		  exit;
-		ControllerUsuarios::altera($request->getParsedBodyParam('nome'), $request->getParsedBodyParam('usuario'), $request->getParsedBodyParam('email'),
+		ControllerUsuarios::atualiza($request->getParsedBodyParam('nome'), $request->getParsedBodyParam('usuario'), $request->getParsedBodyParam('email'),
 		  $request->getParsedBodyParam('senha'), $args['id']);
 	});	
 	
@@ -84,7 +84,7 @@
 		if(empty($_SESSION['usuario']))
 		  exit;
 		ControllerTelefones::cadastrarTelefone($request->getParsedBodyParam('nome'),$request->getParsedBodyParam('numero'),
-     		$request->getParsedBodyParam('categoria'), $request->getParsedBodyParam('cidade'), $request->getParsedBodyParam('palavras'));
+     		$request->getParsedBodyParam('categoria'), $request->getParsedBodyParam('cidade'), trim($request->getParsedBodyParam('palavras')));
 	});
 	
 	$app->get('/telefones', function ($request, $response, $args) {

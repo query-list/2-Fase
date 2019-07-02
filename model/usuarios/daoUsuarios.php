@@ -95,10 +95,10 @@
 		try {
 		  $p_sql = Conn::getInstance()->prepare($sql);
           $p_sql->bindValue(":nome", $usuario->getNome());
-		  $p_sql->bindValue(":email", $usuario->getNome());
+		  $p_sql->bindValue(":email", $usuario->getEmail());
 		  $p_sql->bindValue(":usuario", $usuario->getUsuario());
 		  $p_sql->bindValue(":senha", md5($usuario->getSenha()));
-		  $p_sql->bindValue(":id", md5($usuario->getId()));
+		  $p_sql->bindValue(":id", $usuario->getId());
           $p_sql->execute();
 		  echo 'Sucesso: usuário atualizado.';
 		  return TRUE;

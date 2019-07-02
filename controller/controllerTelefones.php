@@ -18,7 +18,7 @@ class ControllerTelefones{
 		$telefone->setNumero($numero);
 		$telefone->setCategoria($categoria);
 		$telefone->setCidade($idcidade);
-		$palavraschaves = explode("\n", $palavraschaves);
+		$palavraschaves = array_filter(explode("\n", $palavraschaves));
 		$telefone->setPalavrasChaves($palavraschaves);
 		DaoTelefones::inserir($telefone);
 		

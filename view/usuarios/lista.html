@@ -3,7 +3,6 @@
 <head>
 <title>Query List</title>
 <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<link href="../../assets/css/login.css" rel="stylesheet" id="bootstrap-css">
 <link href="../../assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
@@ -11,11 +10,32 @@
 <script src="../../assets/js/dataTables.buttons.min.js"></script>
 <script src="../../assets/js/dataTables.select.min.js"></script>
 <script src="../../assets/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../assets/js/dataTables.editor.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
 $(document).ready(function() {
+function alterar(){
+  $.ajax({
+    url: '/usuarios/'+$('#id').val(),
+    type: 'PUT',
+	data:{
+	  nome: $('#nome').val(),
+	  usuario: $('#usuario').val(),
+	  email: $('#email').val(),
+	  senha: $('#senha').val(),
+	  id: $('#id').val()
+	  },
+    success: function(result) {
+	    alert(result);
+		location.reload();
+    }
+  });
+} 
+$("#btnAltera").click(function(event){
+  event.preventDefault();
+  alterar();
+  });
+
     $('#usuarios').DataTable({
 	   ajax: "/usuarios/listar",
 	   
@@ -79,45 +99,22 @@ function alterarModal(id){
 	    $('#nome').val(usuario.nome);
 		$('#usuario').val(usuario.usuario);
 		$('#email').val(usuario.email);
-		$('#id').val(id);
+		$('#id').val(usuario.id);
 		$('#alterar').modal('show');
     }
   });  
 }
-
-$(document).ready(function() {
-$(document).delegate("click", "#btnAltera" ,function(event){
-  event.stopPropagation();
-  alterar();
-});
-});
-
-function alterar(){
-  $.ajax({
-    url: '/usuarios/'+$('#id').val(),
-    type: 'PUT',
-	data:{
-	  nome: $('#nome').val(),
-	  usuario: $('#usuario').val(),
-	  email: $('#email').val(),
-	  senha: $('#senha').val()
-	  },
-    success: function(result) {
-	    alert(result);
-		location.reload();
-    }
-  });  
-}
-
 </script>
-<div id="alterar" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+
+<div id="alterar" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role = "document">
     <div class="modal-content">
       <div class="modal-header">
 	    <h4>Alterar Usuário</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
+	    <form>
 	    <div class="form-group">
           <label for="nome">Nome:</label>
 		  <input type="text" id="nome" class="form-control" placeholder="Nome"></input>
@@ -135,16 +132,16 @@ function alterar(){
 		  <input type="password" id="senha"  class="form-control" placeholder="Senha"></input>
 		</div>
 		<input type="hidden" id="id"></input>
+		</form>
 	  </div>
-      </div>
       <div class="modal-footer">
 	    <button type="button" id="btnAltera" class="btn btn-primary">Ok</button>
-        <button type="button" class="btn btn-secondary">Fechar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
       </div>
     </div>
-
   </div>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+</div>
+ <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 
   <a class="navbar-brand" href="#">Query List</a>
   
