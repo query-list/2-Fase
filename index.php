@@ -87,12 +87,26 @@
      		$request->getParsedBodyParam('categoria'), $request->getParsedBodyParam('cidade'), trim($request->getParsedBodyParam('palavras')));
 	});
 	
+	$app->put('/telefones/{id}', function ($request, $response, $args) {
+		session_start();
+		if(empty($_SESSION['usuario']))
+		  exit;
+		ControllerTelefones::atualizarTelefone($request->getParsedBodyParam('nome'),$request->getParsedBodyParam('numero'),
+     		$request->getParsedBodyParam('categoria'), $request->getParsedBodyParam('cidade'), trim($request->getParsedBodyParam('palavras')),
+			$args['id']);	  
+	});
+	
 	$app->get('/telefones', function ($request, $response, $args) {
 		session_start();
 		if(empty($_SESSION['usuario']))
 		  exit;
 		ControllerTelefones::listar();
-	});	
+	});
+	
+	$app->get('/telefones/{id}', function ($request, $response, $args) {
+		ControllerTelefones::buscaTelefoneId($args['id']);
+	});
+	
 	
 	$app->post('/telefone/cidade/{id}', function ($request, $response, $args) {
 		ControllerTelefones::buscaTelefoneCidade($args['id']);

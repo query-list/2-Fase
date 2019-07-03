@@ -28,11 +28,15 @@
   	
 	public static function buscaId($id){
 			try{
-				$p_sql = Conn::getInstance()->prepare('SELECT * FROM telefones WHERE id = :id');
+				$p_sql = Conn::getInstance()->prepare('SELECT *, municipio.Nome AS cidade, municipio.Uf AS estado FROM telefones, municipio WHERE telefones.id = :id AND municipio.id =  telefones.idcidade');
 				$p_sql->bindValue(":id", $id);
 				$p_sql->execute();
 				$telefone = $p_sql->fetch(PDO::FETCH_ASSOC);
-				return $telefone;
+				$p_sql = Conn::getInstance()->prepare('SELECT * FROM  palavrachavestelefones WHERE idtelefone = :id');
+				$p_sql->bindValue(":id", $id);
+				$p_sql->execute();	
+				$telefone['chaves'] = $p_sql->fetchAll(PDO::FETCH_ASSOC) ; 
+				return $telefone ;
 			}
 			catch(Exception $e){
 				print $e->getMessage();
@@ -42,6 +46,9 @@
     public static function deleta($id){	
 		try{
 			$p_sql = Conn::getInstance()->prepare('DELETE FROM telefones WHERE id = :id');
+			$p_sql->bindValue(":id", $id);
+			$p_sql->execute();
+			$p_sql = Conn::getInstance()->prepare('DELETE FROM palavrachavestelefones WHERE idtelefone = :id');
 			$p_sql->bindValue(":id", $id);
 			$p_sql->execute();
 			echo 'Sucesso: telefone deletado.';
@@ -97,23 +104,28 @@
 		}	
 	}
 	
-	public static function atualiza($usuario){
-		/*$sql = 'UPDATE telefones SET nome = :nome, email = :email, usuario = :usuario, senha = :senha WHERE id = :id';
+	public static function atualiza($telefone){
+		$sql = 'UPDATE telefones SET categoria = :categoria, numero = :numero, idcidade = :idcidade, descricao = :descricao WHERE id = :id';
 		try {
 		  $p_sql = Conn::getInstance()->prepare($sql);
-          $p_sql->bindValue(":nome", $usuario->getNome());
-		  $p_sql->bindValue(":email", $usuario->getNome());
-		  $p_sql->bindValue(":usuario", $usuario->getUsuario());
-		  $p_sql->bindValue(":senha", md5($usuario->getSenha()));
-		  $p_sql->bindValue(":id", md5($usuario->getId()));
+          $p_sql->bindValue(":descricao", $telefone->getDescricao());
+		  $p_sql->bindValue(":categoria", $telefone->getCategoria());
+		  $p_sql->bindValue(":numero", $telefone->getNumero());
+		  $p_sql->bindValue(":idcidade", $telefone->getCidade());
+		  $p_sql->bindValue(":id", $telefone->getId());
           $p_sql->execute();
-		  echo 'Sucesso: usuário atualizado.';
+		  $sql = 'DELETE FROM palavrachavestelefones WHERE idtelefone = :idtelefone';
+		  $p_sql = Conn::getInstance()->prepare($sql);
+		  $p_sql->bindValue(":idtelefone", $telefone->getId());
+		  $p_sql->execute();
+		  DaoTelefones::inserirPalavrasChaves($telefone);
+		  echo 'Sucesso: telefone atualizado.';
 		  return TRUE;
 	   }
 		catch(Exception $e){
 			Conn::getInstance()->rollBack();
 			echo $e->getMessage();
-		}*/
+		}
 	}		
 	
 	public static function buscaToken($token){

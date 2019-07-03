@@ -49,5 +49,24 @@ class ControllerTelefones{
 		}
 		echo json_encode($data);			
 	}
+	
+	public static function buscaTelefoneId($id){
+		echo json_encode(DaoTelefones::buscaId($id));
+	}
+	
+	public static function atualizarTelefone($descricao, $numero, $categoria, $idcidade, $palavraschaves, $id){
+		$telefone = new Telefones();
+		$telefone->setDescricao($descricao);
+		$telefone->setNumero($numero);
+		$telefone->setCategoria($categoria);
+		$telefone->setCidade($idcidade);
+		$palavraschaves = array_filter(explode("\n", $palavraschaves));
+		$telefone->setPalavrasChaves($palavraschaves);
+		$telefone->setId($id);
+		Conn::getInstance()->beginTransaction();
+		DaoTelefones::atualiza($telefone);		
+		Conn::getInstance()->commit();
+	}
+	
 }
 ?>

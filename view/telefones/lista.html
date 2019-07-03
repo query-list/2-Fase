@@ -3,7 +3,6 @@
 <head>
 <title>Query List</title>
 <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<link href="../../assets/css/login.css" rel="stylesheet" id="bootstrap-css">
 <link href="../../assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="../../assets/js/jquery.min.js"></script>
 <script src="../../assets/js/bootstrap.min.js"></script>
@@ -69,38 +68,55 @@ function deletar(id){
     }
   });
 }
-
-function alterarModal(id){
+   function mudaUF(){
   $.ajax({
+    url: '/telefones/cidades/'+$('#uf').val(),
+    type: 'GET',
+    success: function(result) {
+		var cidades = JSON.parse(result);
+		var selectCidade = $('#cidade');
+		selectCidade.empty();
+		for(var i=0;i<cidades.length;i++){
+		  selectCidade.append($('<option></option>').val(cidades[i].Id).html(cidades[i].Nome));
+		}
+   }
+   }
+   );
+   }
+   
+function alterarModal(id){
+   $.ajax({
     url: '/telefones/'+id,
     type: 'GET',
     success: function(result) {
-	    var usuario = JSON.parse(result);
-	    $('#nome').val(usuario.nome);
-		$('#usuario').val(usuario.usuario);
-		$('#email').val(usuario.email);
-		$('#id').val(id);
+	    var telefone = JSON.parse(result);
+	    $('#nome').val(telefone.descricao);
+		$('#numero').val(telefone.numero);
+		$('#categoria').val(telefone.categoria);
+		$('#uf').val(telefone.estado);
+		mudaUF();
+		$('#cidade').val(telefone.idcidade);
+		var palavras = '';
+		for(var i = 0;i <telefone['chaves'].length;i++){
+		  palavras = palavras + telefone['chaves'][i].nome + "\n";
+		}
+		$('#palavras').val(palavras);
+		$('#id').val(telefone.id);
 		$('#alterar').modal('show');
     }
   });  
 }
 
-$(document).ready(function() {
-$(document).delegate("click", "#btnAltera" ,function(event){
-  event.stopPropagation();
-  alterar();
-});
-});
-
 function alterar(){
   $.ajax({
-    url: '/usuarios/'+$('#id').val(),
+    url: '/telefones/'+$('#id').val(),
     type: 'PUT',
 	data:{
 	  nome: $('#nome').val(),
-	  usuario: $('#usuario').val(),
-	  email: $('#email').val(),
-	  senha: $('#senha').val()
+	  numero: $('#numero').val(),
+	  categoria: $('#categoria').val(),
+	  cidade: $('#cidade').val(),
+	  palavras: $('#palavras').val()
 	  },
     success: function(result) {
 	    alert(result);
@@ -114,36 +130,73 @@ function alterar(){
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-	    <h4>Alterar Usuário</h4>
+	    <h4>Alterar Telefone</h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
+	    <form>
 	    <div class="form-group">
-          <label for="nome">Nome:</label>
-		  <input type="text" id="nome" class="form-control" placeholder="Nome"></input>
+          <label for="nome">Nome do Serviço:</label>
+		  <input type="text" id="nome" class="form-control" placeholder="Nome do serviço"></input>
 		</div>
 		<div class="form-group">
-          <label for="usuario">Categoria:</label>
-		  <input type="text" id="usuario" class="form-control" placeholder="Usuário"></input>
+          <label for="categoria">Categoria:</label>
+		  <select id="categoria" class="form-control"></select>
 		</div>
 		<div class="form-group">
-		  <label for="email">Email:</label>
-		  <input type="text" id="email" class="form-control" placeholder="Email"></input>
+		  <label for="numero">Numero do telefone(com DD):</label>
+		  <input type="text" id="numero" class="form-control" placeholder="Telefone"></input>
 		</div>
 		<div class="form-group">
-		  <label for="senha">Senha:</label>
-		  <input type="password" id="senha"  class="form-control" placeholder="Senha"></input>
+		  <label for="uf">Estado:</label>
+				<select id="uf"  class="form-control" onchange="mudaUF()">
+						<option value="AC">Acre</option>
+						<option value="AL">Alagoas</option>
+						<option value="AP">Amapá</option>
+						<option value="AM">Amazonas</option>
+						<option value="BA">Bahia</option>
+						<option value="CE">Ceará</option>
+						<option value="DF">Distrito Federal</option>
+						<option value="ES">Espírito Santo</option>
+						<option value="GO">Goiás</option>
+						<option value="MA">Maranhão</option>
+						<option value="MT">Mato Grosso</option>
+						<option value="MS">Mato Grosso do Sul</option>
+						<option value="MG">Minas Gerais</option>
+						<option value="PA">Pará</option>
+						<option value="PB">Paraíba</option>
+						<option value="PR">Paraná</option>
+						<option value="PE">Pernambuco</option>
+						<option value="PI">Piauí</option>
+						<option value="RJ">Rio de Janeiro</option>
+						<option value="RN">Rio Grande do Norte</option>
+						<option value="RS">Rio Grande do Sul</option>
+						<option value="RO">Rondônia</option>
+						<option value="RR">Roraima</option>
+						<option value="SC">Santa Catarina</option>
+						<option value="SP">São Paulo</option>
+						<option value="SE">Sergipe</option>
+						<option value="TO">Tocantins</option>
+				</select>
 		</div>
+		<div class="form-group">
+			<label for="cidade">Cidade</label>
+			<select id="cidade" class="form-control"></select>
+		</div>
+		<div class="form-group">
+			<label for="palavras">Palavras-Chaves</label>
+			<textarea class="form-control" id="palavras" rows="3"></textarea>
+		</div>	  		
 		<input type="hidden" id="id"></input>
-	  </div>
+		</form>
       </div>
       <div class="modal-footer">
-	    <button type="button" id="btnAltera" class="btn btn-primary">Ok</button>
-        <button type="button" class="btn btn-secondary">Fechar</button>
+	    <button type="button" id="btnAltera" class="btn btn-primary" onclick="alterar()">Ok</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
       </div>
     </div>
-
   </div>
+ </div>
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 
   <a class="navbar-brand" href="#">Query List</a>
