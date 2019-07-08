@@ -13,9 +13,15 @@
         return self::$instance;
     }
 	
-	public static function buscaTelefoneCidade($idcidade){
+	public static function buscaTelefoneCidade($idcidade, $palavra){
 			try{
-				$p_sql = Conn::getInstance()->prepare('SELECT * FROM telefones WHERE idcidade = :idcidade');
+				if(!(empty($palavra))){
+				   $p_sql = Conn::getInstance()->prepare('SELECT * FROM telefones, palavrachavestelefones WHERE idcidade = :idcidade AND palavrachavestelefones.nome = :nome AND palavrachavestelefones.idtelefone = telefones.id');
+				   $p_sql->bindValue(":nome", $palavra);
+				}
+				else{
+                   $p_sql = Conn::getInstance()->prepare('SELECT * FROM telefones WHERE idcidade = :idcidade');					
+				}
 				$p_sql->bindValue(":idcidade", $idcidade);
 				$p_sql->execute();
 				$telefone = $p_sql->fetchAll(PDO::FETCH_ASSOC);
@@ -91,6 +97,23 @@
 			print $e->getMessage();
 		}		
 	}
+
+	public static function listPalavras($chave){
+		try{
+			$p_sql = Conn::getInstance()->prepare('SELECT DISTINCT(palavrachavestelefones.Nome) AS palavra FROM palavrachavestelefones WHERE Nome LIKE :chave ORDER BY Nome');
+			$p_sql->bindValue(":chave", "%".$chave."%");
+			$p_sql->execute();
+			$palavras = array();
+			foreach($p_sql->fetchAll(PDO::FETCH_ASSOC) as $palavra){
+				array_push($palavras, $palavra['palavra']);
+				//$palavras = $palavras + $palavra['palavra'];
+			}
+			return $palavras;
+		}
+		catch(Exception $e){
+			print $e->getMessage();
+		}		
+	}
 	
 	public static function listCidadesUF($uf){
 		try{
@@ -99,6 +122,7 @@
 			$p_sql->execute();
 			return $p_sql->fetchAll(PDO::FETCH_ASSOC);
 		}
+		
 		catch(Exception $e){
 			print $e->getMessage();
 		}	

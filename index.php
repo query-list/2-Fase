@@ -96,6 +96,10 @@
 			$args['id']);	  
 	});
 	
+	$app->get('/teste', function ($request, $response, $args) {
+		echo '["Natação","Futebol","Vôlei","Basquete"]';
+	});
+	
 	$app->get('/telefones', function ($request, $response, $args) {
 		session_start();
 		if(empty($_SESSION['usuario']))
@@ -107,9 +111,12 @@
 		ControllerTelefones::buscaTelefoneId($args['id']);
 	});
 	
+	$app->get('/telefones/palavras/chaves/{id}', function ($request, $response, $args) {
+		ControllerTelefones::palavras($args['id']);
+	});
 	
 	$app->post('/telefone/cidade/{id}', function ($request, $response, $args) {
-		ControllerTelefones::buscaTelefoneCidade($args['id']);
+		ControllerTelefones::buscaTelefoneCidade($args['id'], trim($request->getParsedBodyParam('palavra')));
 	});	
 	
 	$app->delete('/telefones/{id}', function ($request, $response, $args) {

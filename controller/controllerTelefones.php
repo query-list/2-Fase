@@ -37,8 +37,8 @@ class ControllerTelefones{
 		DaoTelefones::deleta($id);
 	}
 	
-	public static function buscaTelefoneCidade($idcidade){
-		$telefones = DaoTelefones::buscaTelefoneCidade($idcidade);
+	public static function buscaTelefoneCidade($idcidade, $palavra = ''){
+		$telefones = DaoTelefones::buscaTelefoneCidade($idcidade, $palavra);
 		$data = array("data"=>array());
 		if(!$telefones){
 			echo json_encode($data);
@@ -52,6 +52,10 @@ class ControllerTelefones{
 	
 	public static function buscaTelefoneId($id){
 		echo json_encode(DaoTelefones::buscaId($id));
+	}
+	
+	public static function palavras($chave){
+		echo json_encode(DaoTelefones::listPalavras($chave));
 	}
 	
 	public static function atualizarTelefone($descricao, $numero, $categoria, $idcidade, $palavraschaves, $id){

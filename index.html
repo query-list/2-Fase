@@ -3,18 +3,25 @@
 <head>
 <title>Query List</title>
 <link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="assets/js/jquery-ui.css" rel="stylesheet" id="bootstrap-css">
 <script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery-ui.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
-<script src="../../assets/js/jquery.dataTables.min.js"></script>
-<script src="../../assets/js/dataTables.buttons.min.js"></script>
-<script src="../../assets/js/dataTables.select.min.js"></script>
-<script src="../../assets/js/dataTables.bootstrap4.min.js"></script>
-<script src="../../assets/js/dataTables.editor.min.js"></script>
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/dataTables.buttons.min.js"></script>
+<script src="assets/js/dataTables.select.min.js"></script>
+<script src="assets/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/js/dataTables.editor.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
   var tabela;
   $(document).ready(function(){
+  $('#btnPesquisar').click(function(event){
+    event.preventDefault();
+	location.reload();
+	//mudaCidade();
+  });
   $('#cidade').empty();
   $.ajax({
     url: '/telefones/cidades/'+$('#uf').val(),
@@ -28,11 +35,27 @@
 		}
 		mudaCidade();
 		}});
+		
+    $("#palavra").autocomplete({
+	    source: function( request, response ) {
+	        $.ajax({
+	            url: "/telefones/palavras/chaves/"+$('#palavra').val(),
+	            type: "GET",
+	            success: function(data) {
+				   response(JSON.parse(data));
+				   //alert(JSON.parse(data)[0]);
+				   //return JSON.parse(data);
+	            }
+	        });
+	    }	
+	});
   //$('#cidade').empty();
+  
     tabela = $('#telefones').DataTable({
        searching: false,
 	   ajax: {
 	     url: "/telefone/cidade/"+$('#cidade').val(),
+		 data: {palavra : $('#palavra').val()},
 		 type:'POST' 
 		 },
 	   "language": {
@@ -77,8 +100,9 @@
    }
    );
    }
-   
    function mudaCidade(){
+     //tabela.ajax.data({palavra: $('#palavra').val()});
+    //("#telefones").DataTable({retrieve: true}).ajax.reload();
      tabela.ajax.url("/telefone/cidade/"+$('#cidade').val()).load();
      //$.ajaxSetup({ cache: true });  
     }
@@ -134,11 +158,11 @@
                                     </div>
                          
                                     <div class="col">
-                                        <input class="form-control form-control-lg form-control-borderless" type="search" placeholder="Pesquisar por palavra-chave">
+                                        <input class="form-control form-control-lg form-control-borderless" id="palavra" type="search" placeholder="Pesquisar por palavra-chave">
                                     </div>
                                 
                                     <div class="col-auto">
-                                        <button class="btn btn-lg btn-success" type="submit">Pesquisar</button>
+                                        <button class="btn btn-lg btn-success" type="submit" id="btnPesquisar">Pesquisar</button>
                                     </div>
                           
 									
